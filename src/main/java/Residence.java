@@ -1,16 +1,21 @@
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class Residence extends Building {
+public class Residence {
 
     //3x3 building, so center can be used to shorten the input
     private Coordinate centerCoordinate;
+    private int tier;
 
     public Residence(Coordinate centerCoordinate) {
-        super();
         this.centerCoordinate = centerCoordinate;
-        this.coordinates = generateCoordinatesForUnevenSquareCenter( centerCoordinate, 3);
+        this.tier = 0;
+
+    }
+
+    public Residence(Coordinate centerCoordinate, int tier) {
+        this.centerCoordinate = centerCoordinate;
+        this.tier = tier;
     }
 
 }
