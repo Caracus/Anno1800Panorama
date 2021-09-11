@@ -1,9 +1,6 @@
 import org.paukov.combinatorics3.Generator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -12,12 +9,27 @@ class Main {
     public static void main(String[] args) {
 
         List<Residence> residencesList = new ArrayList<>();
+
+        // 4x4
+        /**
         residencesList.add(new Residence(new Coordinate(1, 1)));
         residencesList.add(new Residence(new Coordinate(4, 4)));
         residencesList.add(new Residence(new Coordinate(1, 4)));
         residencesList.add(new Residence(new Coordinate(4, 1)));
+        */
+
+        residencesList.add(new Residence(new Coordinate(1, 1)));
+        residencesList.add(new Residence(new Coordinate(4, 1)));
+        residencesList.add(new Residence(new Coordinate(7, 1)));
+        residencesList.add(new Residence(new Coordinate(1, 4)));
+        residencesList.add(new Residence(new Coordinate(7, 4)));
+        residencesList.add(new Residence(new Coordinate(1, 7)));
+        residencesList.add(new Residence(new Coordinate(4, 7)));
+        residencesList.add(new Residence(new Coordinate(7, 7)));
 
         AtomicInteger highscorePopulation = new AtomicInteger();
+        AtomicReference<String> highscorePermutation = new AtomicReference<>("");
+
 
         Generator
             .permutation(1, 2, 3 ,4 ,5)
@@ -36,9 +48,15 @@ class Main {
                 if(totalPopulation > highscorePopulation.get()) {
                     System.out.println("New best permutation is: " + permutation + " with " + totalPopulation + " people.");
                     highscorePopulation.set(totalPopulation);
+                    highscorePermutation.set(permutation+"");
                 }
             });
 
+            System.out.println("Final result is: " + highscorePermutation + " with " + highscorePopulation + " people.");
+
+        printPermutation(List.of(highscorePermutation.get().replace(" ","").replace("[","").replace("]","").split(",")), residencesList);
+
+      //  System.out.println(generateCoordinatesForNonCenter(new Coordinate(7, 7),3));
 
         /**
         //Debug a specific combination
@@ -57,6 +75,83 @@ class Main {
         }
          */
 
+
+
+    }
+
+    //refactor this *censored*
+    public static void printPermutation(List<String> permutation, List<Residence> residencesList) {
+        List<PrintCoordinate> allCoordinates = new ArrayList<>();
+
+        //add bunch of x
+        residencesList.forEach(residence -> allCoordinates.addAll(generateCoordinatesForNonCenter(residence.getCenterCoordinate(), 3)));
+
+        //add the level numbers
+        for(int i = 0; i< residencesList.size(); i++) {
+            allCoordinates.add(new PrintCoordinate(residencesList.get(i).getCenterCoordinate(),permutation.get(i)));
+        }
+
+        //determine frame
+        AtomicInteger largestX = new AtomicInteger();
+        AtomicInteger largestY = new AtomicInteger();
+
+        allCoordinates.stream().forEach(printCoordinate -> {
+            if (printCoordinate.coordinate.getX() > largestX.get()) {
+                largestX.set(printCoordinate.coordinate.getX());
+            }
+            if (printCoordinate.coordinate.getY() > largestY.get()) {
+                largestY.set(printCoordinate.coordinate.getY());
+            }
+        });
+
+        int yHeight = largestY.get();
+        int xWidth = largestX.get();
+
+        List<Coordinate> coordinates = new ArrayList<>();
+        allCoordinates.forEach(printCoordinate -> coordinates.add(printCoordinate.coordinate));
+
+        //System.out.println(allCoordinates);
+
+        //print everything
+
+        System.out.println("Building plan:");
+
+        for(int y = yHeight; y > -1; y--) {
+            for( int x = 0; x < xWidth+1; x++) {
+                int finalX = x;
+                int finalY = y;
+                allCoordinates.stream().filter(printCoordinate -> printCoordinate.isSameCoordinate(finalX, finalY)).findFirst();
+
+               Optional<PrintCoordinate> coordinateToBePrintedOptional =  allCoordinates.stream().filter(printCoordinate -> printCoordinate.isSameCoordinate(finalX, finalY)).findFirst();
+                if(coordinateToBePrintedOptional.isPresent()){
+                        System.out.print(coordinateToBePrintedOptional.get().getPrintChar());
+                    } else {
+                        System.out.print(" ");
+                    }
+
+                }
+            System.out.println("");
+            }
+
+        }
+
+
+
+    protected static List<PrintCoordinate> generateCoordinatesForNonCenter(Coordinate centerCoordinate, int size) {
+        List<PrintCoordinate> generatedCoordinates = new ArrayList<>();
+        int coordinateOffset = (size-1)/2;
+
+        int xStart = centerCoordinate.getX() - coordinateOffset;
+        int yStart = centerCoordinate.getY() - coordinateOffset;
+
+        for(int x = xStart; x < size+xStart; x++) {
+            for(int y = yStart; y < size+yStart; y++) {
+                generatedCoordinates.add(new PrintCoordinate(x,y, "X"));
+            }
+        }
+        generatedCoordinates.remove(new PrintCoordinate(centerCoordinate, "X"));
+
+        return generatedCoordinates;
     }
 
     public static int calculatePopulation(Residence centerResidence, List<Residence> allResidences) {
