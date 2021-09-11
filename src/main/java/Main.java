@@ -49,12 +49,12 @@ class Main {
         //xxx,xxx
     }
 
-    public void calculatePopulation(){
+    public void calculatePopulation() {
         // todo: iterate through buildings and add their population
     }
 
     //maybe later
-    public void calculateUpkeep(){
+    public void calculateUpkeep() {
         // todo: iterate through buildings and add upkeep
     }
 
@@ -68,7 +68,23 @@ class Main {
         //todo: iterate through buildings and check if buildingCoords have at least 5/9 matches with the ones return from the radius calculation
     }
 
-    public void calculateRadiusCoordinates(Coordinate coordinate, double radius){
+    public void calculateRadiusCoordinates(Coordinate coordinate, double radius) {
         //todo: either find some fancy math or hardcode squares that count(which might be more performant anyway)
     }
+
+    public  List<Residence> getAllIntersectingBuildings(Coordinate centerCoordinate, List<Residence> allResidences, double radius) {
+        return allResidences.stream()
+                .filter(residence ->
+                        isWithinRadius(centerCoordinate, residence.getCenterCoordinate(), radius)
+                        && centerCoordinate != residence.getCenterCoordinate())
+                .collect(Collectors.toList());
+    }
+
+    public boolean isWithinRadius(Coordinate coordinateOne, Coordinate coordinateTwo, double radius) {
+    double a = Math.abs(coordinateOne.getX()-coordinateTwo.getX());
+    double b = Math.abs(coordinateOne.getY()-coordinateTwo.getY());
+
+        return !(Math.sqrt(a * a + b * b) > radius);
+    }
+
 }
