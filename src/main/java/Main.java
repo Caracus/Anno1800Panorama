@@ -17,44 +17,46 @@ class Main {
         residencesList.add(new Residence(new Coordinate(1, 4)));
         residencesList.add(new Residence(new Coordinate(4, 1)));
 
-        //todo: dont trigger from memory but do it during stream
-        //this is basically 5 options with repetition, should be like 625 combinations for just 4 buildings (wont scale.....)
-        //maybe scrap this entire approach and look into fancy stuff with best but not perfect solutions
         AtomicInteger highscorePopulation = new AtomicInteger();
 
-
-
-
         Generator
-                .permutation(1, 2, 3, 4, 5)
-                .withRepetitions(residencesList.size())
-                .stream()
-                .forEach(permutation -> {
-                    //System.out.println(permutation);
-                    // assign the tiers to the buildings
-                    List<Residence> residencesListWithTier = new ArrayList<>();
-                    for (int i = 0;i < residencesList.size(); i++) {
-                        residencesListWithTier.add(new Residence(residencesList.get(i).getCenterCoordinate(),permutation.get(i)));
-                    }
+            .permutation(1, 2, 3 ,4 ,5)
+            .withRepetitions(residencesList.size())
+            .stream()
+            .forEach(permutation -> {
+                //System.out.println(permutation);
+                // assign the tiers to the buildings
+                List<Residence> residencesListWithTier = new ArrayList<>();
+                for (int i = 0;i < residencesList.size(); i++) {
+                    residencesListWithTier.add(new Residence(residencesList.get(i).getCenterCoordinate(),permutation.get(i)));
+                }
 
-                    int totalPopulation = residencesListWithTier.stream().mapToInt(residence -> calculatePopulation(residence, residencesListWithTier)).sum();
+                int totalPopulation = residencesListWithTier.stream().mapToInt(residence -> calculatePopulation(residence, residencesListWithTier)).sum();
 
-                    if(totalPopulation > highscorePopulation.get()) {
-                        System.out.println("New best permutation is: " + permutation + " with " + totalPopulation + " people.");
-                        highscorePopulation.set(totalPopulation);
-                    }
-                });
+                if(totalPopulation > highscorePopulation.get()) {
+                    System.out.println("New best permutation is: " + permutation + " with " + totalPopulation + " people.");
+                    highscorePopulation.set(totalPopulation);
+                }
+            });
 
 
+        /**
+        //Debug a specific combination
+        List<Integer> permutation = List.of(5, 5, 4, 3);
 
-        //todo: for each permutation trigger population calculation and save the permutation combination aswell as the score if it has higher results than current highscore
-        //todo: print final result, maybe as ascii art like
-        //xxx,xxx
-        //x5x,x4x
-        //xxx,xxx
-        //xxx,xxx
-        //x3x,x2x
-        //xxx,xxx
+        List<Residence> residencesListWithTier = new ArrayList<>();
+        for (int i = 0;i < residencesList.size(); i++) {
+            residencesListWithTier.add(new Residence(residencesList.get(i).getCenterCoordinate(),permutation.get(i)));
+        }
+
+        int totalPopulation = residencesListWithTier.stream().mapToInt(residence -> calculatePopulation(residence, residencesListWithTier)).sum();
+
+        if(totalPopulation > highscorePopulation.get()) {
+            System.out.println("New best permutation is: " + permutation + " with " + totalPopulation + " people.");
+            highscorePopulation.set(totalPopulation);
+        }
+         */
+
     }
 
     public static int calculatePopulation(Residence centerResidence, List<Residence> allResidences) {
@@ -83,8 +85,12 @@ class Main {
             }
         });
 
-        if(panoramaLevel.get() <0 ){
+        if(panoramaLevel.get() < 0 ){
             return 0;
+        }
+
+        if(panoramaLevel.get() > 5 ){
+            return 5;
         }
         return panoramaLevel.get();
     }
