@@ -10,13 +10,16 @@ class Main {
 
         List<Residence> residencesList = new ArrayList<>();
 
-        // 4x4
+        // 2x2
         /**
         residencesList.add(new Residence(new Coordinate(1, 1)));
         residencesList.add(new Residence(new Coordinate(4, 4)));
         residencesList.add(new Residence(new Coordinate(1, 4)));
         residencesList.add(new Residence(new Coordinate(4, 1)));
-        */
+         */
+
+
+        // 3x3 with hole
 
         residencesList.add(new Residence(new Coordinate(1, 1)));
         residencesList.add(new Residence(new Coordinate(4, 1)));
@@ -27,12 +30,35 @@ class Main {
         residencesList.add(new Residence(new Coordinate(4, 7)));
         residencesList.add(new Residence(new Coordinate(7, 7)));
 
+
+        // 8x8 with roads runs too long for larger tier size
+        /**
+         residencesList.add(new Residence(new Coordinate(1, 1)));
+         residencesList.add(new Residence(new Coordinate(1, 4)));
+         residencesList.add(new Residence(new Coordinate(1, 8)));
+         residencesList.add(new Residence(new Coordinate(1, 11)));
+         residencesList.add(new Residence(new Coordinate(4, 1)));
+         residencesList.add(new Residence(new Coordinate(4, 4)));
+         residencesList.add(new Residence(new Coordinate(4, 8)));
+         residencesList.add(new Residence(new Coordinate(4, 11)));
+
+         residencesList.add(new Residence(new Coordinate(8, 1)));
+         residencesList.add(new Residence(new Coordinate(8, 4)));
+         residencesList.add(new Residence(new Coordinate(8, 8)));
+         residencesList.add(new Residence(new Coordinate(8, 11)));
+         residencesList.add(new Residence(new Coordinate(11, 1)));
+         residencesList.add(new Residence(new Coordinate(11, 4)));
+         residencesList.add(new Residence(new Coordinate(11, 8)));
+         residencesList.add(new Residence(new Coordinate(11, 11)));
+         */
+
+
         AtomicInteger highscorePopulation = new AtomicInteger();
         AtomicReference<String> highscorePermutation = new AtomicReference<>("");
 
 
         Generator
-            .permutation(1, 2, 3 ,4 ,5)
+            .permutation(1,2, 3, 4 ,5)
             .withRepetitions(residencesList.size())
             .stream()
             .forEach(permutation -> {
